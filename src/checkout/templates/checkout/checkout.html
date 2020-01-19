@@ -1,0 +1,72 @@
+{% extends "products/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="container my-4">
+        <h2 class="text-center my-4">Checkout</h2>
+        {% include "products/messages.html" %}
+        {% if order_items %}
+            <div class="row">
+                <div class="col-lg-8 order-2 order-lg-1">
+                    <div class="card">
+                      <div class="card-body">
+                        <h5 class="card-title">Shipping Address</h5>
+                          <form method="POST">
+                              {% csrf_token %}
+                              {% include 'checkout/shipping_address_form.html' %}
+                              <div class="form-group col-md-4">
+                                {{ form.save_address|as_crispy_field  }}
+                            </div>
+                              <button type="submit" class="btn btn-block btn-success my-4">Pay for the Order</button>
+                          </form>
+                      </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 order-1 order-lg-2">
+                    <div class="card">
+                      <div class="card-body">
+                        <h5 class="card-title mb-4">Your order</h5>
+                          <ul class="list-group">
+                            {% for item in order_items %}
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="font-weight-bold">{{ item.item.name }}</h6>
+                                        <small>Quantity: {{ item.quantity }}</small>
+                                    </div>
+                                    <span>{{ item.get_total|floatformat:2 }} $</span>
+                                </li>
+                            {% endfor %}
+                                {% if order.promo_code_applied %}
+                                    <li class="list-group-item d-flex justify-content-between">
+                                    <span class="text-success">Discount</span>
+                                    <span class="font-weight-bold text-success">-{{ order.promo_code_discount|floatformat:2 }} $</span>
+                                </li>
+                                {% endif %}
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <h6>TOTAL:</h6>
+                                    <span class="font-weight-bold text-success">{{ order.get_total_amount|floatformat:2 }} $</span>
+                                </li>
+                                {% if not order.promo_code_applied %}
+                                    <div class="form-group">
+                                        <form method="POST" action="{% url 'checkout:promotion-code' %}">
+                                            {% csrf_token %}
+                                            {{ promo_form.code|as_crispy_field  }}
+                                            <button class="btn btn-primary btn-block">Add Code</button>
+                                        </form>
+                                    </div>
+                                {%endif %}
+                          </ul>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-warning" role="alert">
+                No items in cart.
+            </div>
+            <div class="m-auto w-50  py-4">
+                <a class="btn btn-warning btn-block" href="{% url 'products:home-page' %}">Back to Home Page</a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

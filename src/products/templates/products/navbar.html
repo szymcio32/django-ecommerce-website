@@ -1,0 +1,44 @@
+{% load cart_icon %}
+<nav class="navbar sticky-top navbar-expand-md navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand h1 text-primary" href="{% url 'products:home-page' %}">Django ecommerce website</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarToggler">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'products:home-page' %}">Home</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'show-orders' %}">Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'refund' %}">Request Refund</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account_logout' %}">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account_login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account_signup' %}">Sign Up</a>
+                    </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'carts:show-cart' %}">Cart<i class="fas fa-shopping-cart ml-2"></i>
+                        <span id="cart-total-items" class="badge badge-info">{{ user| total_cart_items }}</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

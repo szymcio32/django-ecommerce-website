@@ -1,0 +1,67 @@
+{% extends "products/base.html" %}
+{% block content %}
+    <div class="container my-4">
+        <h2 class="text-center my-4">Your Orders</h2>
+        {% include "products/messages.html" %}
+        <table class="table">
+            {% if orders %}
+                <thead>
+                    <tr>
+                        <th scope="col">Order ID</th>
+                        <th scope="col">Pay date</th>
+                        <th scope="col">Products</th>
+                    </tr>
+                </thead>
+            {% endif %}
+            <tbody>
+                {% for order in orders %}
+                    <tr>
+                        <th scope="row">{{ order.order_id }}</th>
+                        <td>
+                            {{ order.payment.issued_data }}
+                        </td>
+                        <td>
+                            {% for item in order.items.all %}
+                                <div class="row align-middle">
+                                    <div class="col-6 mb-3">
+                                        <h6>{{ item.item.name }}</h6>
+                                        <small>Quantity: {{ item.quantity }}</small>
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <span class="font-weight-bold mr-4">{{ item.get_total|floatformat:2 }} $</span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="text-right"><small>Shipping Address:</small></td>
+                        <td>
+                            <small >
+                                {{ order.shipping_address.first_name }} {{ order.shipping_address.last_name }} <br>
+                                {{ order.shipping_address.street }} {{ order.shipping_address.street_number }} <br>
+                                {{ order.shipping_address.zip_code }} <br>
+                                {{ order.shipping_address.country }}
+                            </small >
+                        </td>
+                    </tr>
+                    {% if order.promo_code_applied %}
+                        <tr class="">
+                            <td colspan="3" class="text-right">Discount: <span class="font-weight-bold">-{{ order.promo_code_discount|floatformat:2 }} $</span></td>
+                        </tr>
+                    {% endif %}
+                    <tr class="table-success">
+                        <td colspan="3" class="text-right text-success"><h5>Total: <span class="font-weight-bold">{{ order.get_total_amount|floatformat:2 }} $</span></h5></td>
+                    </tr>
+                    {% empty %}
+                        <div class="alert alert-info" role="alert">
+                            You do not have any orders
+                        </div>
+                {% endfor %}
+                <tr>
+                    <td colspan="3"><a class="btn btn-warning" href="{% url 'products:home-page' %}">Back to Home Page</a> </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "products/base.html" %}
+{% block content %}
+    <div class="container my-4">
+        {% include "products/messages.html" %}
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Shipping Address</legend>
+                {% include "checkout/shipping_address_form.html" %}
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-primary" type="submit">Update Shipping Address</button>
+            </div>
+        </form>
+        <a class="btn btn-warning" href="{% url 'products:home-page' %}">Back to Home Page</a>
+    </div>
+{% endblock %}

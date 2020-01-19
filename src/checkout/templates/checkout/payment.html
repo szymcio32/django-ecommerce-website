@@ -1,0 +1,32 @@
+{% extends "products/base.html" %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" type="text/css" href="{% static 'checkout/stripe_payment.css' %}">
+<script src="https://js.stripe.com/v3/"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="container my-4">
+        <h2 class="text-center my-4">Payment</h2>
+
+        <form action="{% url 'checkout:payment' %}" method="post" id="payment-form" class="p-5 bg-light">
+            {% csrf_token %}
+            <div class="w-100 my-3">
+                <label for="card-element">Credit or debit card</label>
+                <div id="card-element">
+                <!-- A Stripe Element will be inserted here. -->
+                </div>
+
+                <!-- Used to display form errors. -->
+                <div id="card-errors" role="alert"></div>
+            </div>
+            <button class="btn btn-primary btn-block">Pay {{ order.get_total_amount|floatformat:2 }} $</button>
+        </form>
+
+    </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script type="text/javascript" src="{% static 'checkout/stripe_payment.js' %}"></script>
+{% endblock %}

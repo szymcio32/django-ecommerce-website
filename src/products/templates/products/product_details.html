@@ -1,0 +1,70 @@
+{% extends "products/base.html" %}
+{% load static %}
+{% block content %}
+    <section id="product-container" class="container my-5">
+        {% include "products/messages.html" %}
+        <div id="product-details" class="card border-0">
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="{{ product.thumbnail.url }}" class="card-img-top" alt="{{ object.name }}">
+                </div>
+                <div class="col-md-6">
+                    <div class="card-body">
+                        <h2 class="card-title">{{ object.name }}</h2>
+                        <h6 class="card-subtitle mb-2 badge badge-primary">{{ object.category }}</h6>
+                        <p class="card-text my-5">{{ object.description }}</p>
+                        <div class="d-flex align-items-center">
+                            <h5 class="card-text font-weight-bold mr-4">{{ object.price|floatformat:2 }} $</h5>
+                            <button id="add_to_cart" class="btn btn-primary">
+                                <i class="fas fa-shopping-cart mr-2"></i>Add to cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script type="text/javascript" src="{% static 'products/main.js' %}"></script>
+<script>
+    // add event listener to 'add to cart' button
+    document.querySelector('#add_to_cart').addEventListener('click', (e) => {
+        e.preventDefault();
+
+        const csrftoken = getCookie('csrftoken');
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', "{% url 'carts:add-to-cart' object.pk %}", true);
+        xhr.setRequestHeader('X-CSRFToken', csrftoken);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        var json_response;
+        xhr.onload = () => {
+            if (xhr.status == 200){
+                json_response = JSON.parse(xhr.responseText);
+                updateTotalCartItems(json_response['total_items']);
+
+                let cls = 'alert-success'
+                let msg = json_response['msg'];
+                showAlert(msg, cls, '#product-container', '#product-details');
+
+            }
+            else if (xhr.status == 401){
+                json_response = JSON.parse(xhr.responseText);
+
+                let cls = 'alert-danger'
+                let msg = json_response['error'];
+                showAlert(msg, cls, '#product-container', '#product-details');
+            }
+        }
+
+        xhr.onerror = () => {
+            console.log('Ajax request failed');
+        }
+
+        xhr.send();
+    });
+</script>
+{% endblock %}

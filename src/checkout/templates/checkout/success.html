@@ -1,0 +1,13 @@
+{% extends "products/base.html" %}
+{% block content %}
+    <div class="container my-4">
+        <div class="text-center my-4">
+            <h3 class="display-4 text-success">The order has been successfully proceed</h3>
+            <h4>Thank you!</h4>
+            <div class="m-auto w-50  py-4">
+                <a class="btn btn-warning btn-block mb-3" href="{% url 'products:home-page' %}">Back to Home Page</a>
+                <a class="btn btn-success btn-block" href="{% url 'show-orders' %}">Check your orders</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

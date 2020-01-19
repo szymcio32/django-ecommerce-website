@@ -1,0 +1,63 @@
+{% extends "products/base.html" %}
+{% load static %}
+{% block content %}
+    <div class="container my-4">
+        <h2 class="text-center my-4">Your Cart</h2>
+        {% include "products/messages.html" %}
+        <table class="table">
+            {% if order.items.all %}
+            <thead>
+                <tr>
+                    <th scope="col">Product</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Price</th>
+                    <th scope="col" class="text-center">Amount</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            {% endif %}
+            <tbody>
+                {% for item in order.items.all %}
+                    <tr>
+                        <td>{{ item.item.name }}</td>
+                        <td>
+                            <a href="{% url 'carts:decrease-product-in-cart' item.item.id %}"><span class="badge badge-dark mr-2"><i class="fas fa-minus"></i></span></a>
+                            <span>{{ item.quantity }}</span>
+                            <a href="{% url 'carts:increase-product-in-cart' item.item.id %}"><span class="badge badge-dark ml-2"><i class="fas fa-plus"></i></span></a>
+                        </td>
+                        <td>{{ item.item.price|floatformat:2 }} $</td>
+                        <td class="text-center">{{ item.get_total|floatformat:2 }} $</td>
+                        <td class="text-right">
+                            <a class="btn btn-danger" href="{% url 'carts:remove-from-cart' item.item.id %}"><i class="far fa-trash-alt"></i></a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <div class="alert alert-info" role="alert">
+                        The cart is empty
+                    </div>
+                {% endfor %}
+                {% if order.promo_code_applied %}
+                    <tr>
+                        <td colspan="3"></td>
+                        <td class="text-center text-success">
+                            Discount: <span class="font-weight-bold">-{{ order.promo_code_discount|floatformat:2 }} $</span>
+                        </td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td colspan="3">
+                        <a class="btn btn-warning" href="{% url 'products:home-page' %}">Back to Home Page</a>
+                    </td>
+                    {% if order.items.all %}
+                    <td class="text-center">
+                        Total: <span class="font-weight-bold ml-1">{{ order.get_total_amount|floatformat:2 }} $</span>
+                    </td>
+                    <td>
+                        <a class="btn btn-info btn-block" href="{% url 'checkout:checkout' %}">Checkout</a>
+                    </td>
+                    {% endif %}
+                </tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
